@@ -11,6 +11,8 @@ import authRoutes from "./routers/authRoutes.js";
 import documentRoutes from "./routers/documentRoutes.js";
 import flashcardRoutes from "./routers/flashcardRoutes.js";
 import aiRoutes from "./routers/aiRoutes.js";
+import quizRoutes from "./routers/quizRoutes.js";
+import progressRoutes from "./routers/progressRoutes.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -31,12 +33,14 @@ app.use(
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-app.use("uploads", express.static(path.join(__dirname, "uploads")));
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 app.use("/api/auth", authRoutes);
 app.use("/api/documents", documentRoutes);
 app.use("/api/flashcards", flashcardRoutes);
 app.use("/api/ai", aiRoutes);
+app.use("/api/quizzes", quizRoutes);
+app.use("/api/progress", progressRoutes);
 
 app.use(errorHandler);
 
