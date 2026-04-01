@@ -36,12 +36,21 @@ export default function DashboardPage() {
 
   if (!dashboardData || !dashboardData.overview) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white flex items-center justify-center ">
-        <div className="text-center items-center justify-center w-16 h16 rounded-2xl bg-slate-100 mb-4">
-          <div className="inline-flex  ">
-            <TrendingUp className="w-8 h-8 text-slate-400 " />
+      <div className="flex items-center justify-center h-full">
+        <div className="w-full max-w-sm bg-white shadow-lg rounded-2xl p-6 text-center border border-slate-100">
+          <div className="flex items-center justify-center mb-4">
+            <div className="p-3 rounded-full bg-slate-100">
+              <TrendingUp className="w-6 h-6 text-slate-400" />
+            </div>
           </div>
-          <p className="text-slate-600 text-sm">No dashboard data available.</p>
+
+          <h2 className="text-lg font-semibold text-slate-700 mb-1">
+            No Data Available
+          </h2>
+
+          <p className="text-sm text-slate-500">
+            We couldn't find any dashboard data to display right now.
+          </p>
         </div>
       </div>
     );
