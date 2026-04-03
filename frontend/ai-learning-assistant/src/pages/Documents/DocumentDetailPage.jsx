@@ -8,6 +8,9 @@ import Spinner from "../../components/common/Spinner";
 import Tabs from "../../components/common/Tabs";
 import documentService from "../../services/documentService";
 import ChatInterface from "../../components/chat/ChatInterface";
+import AiAction from "../../components/ai/AiAction";
+import FlashcardManager from "../../components/flashcards/FlashcardManager";
+import QuizManager from "../../components/quizzes/QuizManager";
 
 export default function DocumentDetailPage() {
   const { id } = useParams();
@@ -91,15 +94,15 @@ export default function DocumentDetailPage() {
   };
 
   const renderAIActions = () => {
-    return "renderAIActions";
+    return <AiAction />;
   };
 
   const renderFlashcardsTab = () => {
-    return "renderFlashcardsTab";
+    return <FlashcardManager documentId={id} />;
   };
 
   const renderQuizzesTab = () => {
-    return "renderQuizzesTab";
+    return <QuizManager documentId={id} />;
   };
 
   const tabs = [
