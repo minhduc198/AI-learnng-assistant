@@ -59,6 +59,7 @@ export const submitQuiz = async (req, res, next) => {
       _id: req.params.id,
       userId: req.user._id,
     });
+    console.log("🚀 ~ submitQuiz ~ quiz-------:", quiz);
 
     if (!quiz) {
       return res.status(404).json({
@@ -146,7 +147,7 @@ export const getQuizResults = async (req, res, next) => {
     }
 
     const detailedResults = quiz.questions.map((question, index) => {
-      const userAnswer = quiz.userAnswers?.find(
+      const userAnswers = quiz.userAnswers?.find(
         (a) => a.questionIndex === index,
       );
 
@@ -155,8 +156,8 @@ export const getQuizResults = async (req, res, next) => {
         question: question.question,
         options: question.options,
         correctAnswer: question.correctAnswer,
-        selectedAnswer: userAnswer?.selectedAnswer || null,
-        isCorrect: userAnswer?.isCorrect || false,
+        selectedAnswer: userAnswers?.selectedAnswer || null,
+        isCorrect: userAnswers?.isCorrect || false,
         explanation: question.explanation,
       };
     });
