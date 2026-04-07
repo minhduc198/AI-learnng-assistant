@@ -24,7 +24,6 @@ export default function DocumentListPage() {
       const data = await documentService.getDocuments();
       setDocuments(data);
     } catch (error) {
-      toast.error("Failed to fetch documents.");
       console.error(error);
     } finally {
       setLoading(false);
@@ -78,7 +77,6 @@ export default function DocumentListPage() {
     if (!selectedDoc) return;
     setDeleting(true);
     try {
-      console.log("deleteeeee");
       await documentService.deleteDocument(selectedDoc._id);
       toast.success(`${selectedDoc.title} deleted.`);
       setIsDeleteModalOpen(false);

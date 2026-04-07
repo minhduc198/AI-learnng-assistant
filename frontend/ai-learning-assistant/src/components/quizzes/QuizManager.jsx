@@ -1,20 +1,22 @@
-import React, { useEffect, useState } from "react";
-import quizService from "../../services/quizService";
+import { Plus } from "lucide-react";
+import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import aiService from "../../services/aiServices";
+import quizService from "../../services/quizService";
 import Button from "../common/Button";
-import { Plus } from "lucide-react";
-import Spinner from "../common/Spinner";
 import EmptyState from "../common/EmptyState";
-import QuizCard from "./QuizCard";
 import Modal from "../common/Modal";
+import Spinner from "../common/Spinner";
+import QuizCard from "./QuizCard";
+import { syncQuizzes } from "../../utils";
 
 export default function QuizManager({ documentId }) {
   const [quizzes, setQuizzes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [generating, setGenerating] = useState(false);
   const [isGenerateModalOpen, setIsGenerateModalOpen] = useState(false);
-  const [numQuestions, setNumQuestions] = useState(5);
+  const [numQuestions, setNumQuestions] = useState("");
+  const [title, setTitle] = useState("");
 
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [deleting, setDeleting] = useState(false);
@@ -43,7 +45,7 @@ export default function QuizManager({ documentId }) {
     e.preventDefault();
     setGenerating(true);
     try {
-      await aiService.generateQuiz(documentId, { numQuestions });
+      await aiService.generateQuiz(documentId, { numQuestions, title });
       toast.success("Quiz generated successfully!");
       setIsGenerateModalOpen(false);
       fetchQuizzes();
@@ -52,9 +54,11 @@ export default function QuizManager({ documentId }) {
     } finally {
       setGenerating(false);
     }
+
+    syncQuizzes();
   };
 
-  const handleDeleteRequest = (quiz) => {
+  const handleDeleteRequest = async (quiz) => {
     setSelectedQuiz(quiz);
     setIsDeleteModalOpen(true);
   };
@@ -73,6 +77,18 @@ export default function QuizManager({ documentId }) {
     } finally {
       setDeleting(false);
     }
+
+    syncQuizzes();
+  };
+
+  const handleChangeNumOfQuestion = (e) => {
+    const value = e.target.value;
+    if (!value) {
+      setNumQuestions("");
+
+      return;
+    }
+    setNumQuestions(parseInt(e.target.value));
   };
 
   const renderQuizContent = () => {
@@ -106,10 +122,7 @@ export default function QuizManager({ documentId }) {
           Generate Quiz
         </Button>
       </div>
-
       {renderQuizContent()}
-
-      {/* Generate Quiz */}
       <Modal
         isOpen={isGenerateModalOpen}
         onClose={() => setIsGenerateModalOpen(false)}
@@ -118,15 +131,27 @@ export default function QuizManager({ documentId }) {
         <form onSubmit={handleGenerateQuiz} className="space-y-4">
           <div>
             <label className="block text-xs font-medium text-neutral-700 mb-1.5 ">
+              Title
+            </label>
+            <input
+              type="string"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              placeholder="Enter the title"
+              required
+              className="w-full h-9 px-3 border-neutral-200 rounded-lg bg-white text-sm text-neutral-900 placeholder-neutral-400 transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-[#00d492] focus:border-transparent"
+            />
+          </div>
+
+          <div>
+            <label className="block text-xs font-medium text-neutral-700 mb-1.5 ">
               Number of Questions
             </label>
             <input
               type="number"
               value={numQuestions}
-              onChange={(e) =>
-                setNumQuestions(Math.max(1, parseInt(e.target.value) || 1))
-              }
-              min="1"
+              onChange={handleChangeNumOfQuestion}
+              placeholder="Enter number of questions"
               required
               className="w-full h-9 px-3 border-neutral-200 rounded-lg bg-white text-sm text-neutral-900 placeholder-neutral-400 transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-[#00d492] focus:border-transparent"
             />
@@ -141,14 +166,16 @@ export default function QuizManager({ documentId }) {
             >
               Cancel
             </Button>
-            <Button type="submit" disabled={generating}>
+            <Button
+              type="submit"
+              disabled={generating || !title || !numQuestions}
+            >
               {generating ? "Generating..." : "Generate"}
             </Button>
           </div>
         </form>
       </Modal>
 
-      {/* delete modal */}
       <Modal
         isOpen={isDeleteModalOpen}
         onClose={() => setIsDeleteModalOpen(false)}

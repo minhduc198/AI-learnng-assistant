@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from "react";
-import toast from "react-hot-toast";
-import flashcardService from "../../services/flashcardService";
-import FlashcardSetCard from "../../components/flashcards/FlashcardSetCard";
+import { useEffect, useState } from "react";
+import EmptyState from "../../components/common/EmptyState";
 import PageHeader from "../../components/common/PageHeader";
 import Spinner from "../../components/common/Spinner";
+import FlashcardSetCard from "../../components/flashcards/FlashcardSetCard";
+import flashcardService from "../../services/flashcardService";
 
 export default function FlashcardsListPage() {
   const [flashcardSets, setFlashcardSets] = useState([]);
@@ -14,11 +14,8 @@ export default function FlashcardsListPage() {
       try {
         const response = await flashcardService.getAllFlashcardSets();
 
-        console.log("fetchFlashcardSets___", response.data);
-
         setFlashcardSets(response.data);
       } catch (error) {
-        toast.error("Failed to fetch flashcard sets.");
         console.error(error);
       } finally {
         setLoading(false);

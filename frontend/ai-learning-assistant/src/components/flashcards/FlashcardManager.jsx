@@ -33,7 +33,6 @@ export default function FlashcardManager({ documentId }) {
         await flashcardService.getFlashcardsForDocument(documentId);
       setFlashcardSets(response.data);
     } catch (error) {
-      toast.error("Failed to fetch flashcard sets.");
       console.error(error);
     } finally {
       setLoading(false);

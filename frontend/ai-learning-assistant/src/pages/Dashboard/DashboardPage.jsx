@@ -1,6 +1,3 @@
-import React, { useEffect, useState } from "react";
-import progressService from "../../services/progressService";
-import toast from "react-hot-toast";
 import {
   BookOpen,
   BrainCircuit,
@@ -8,7 +5,9 @@ import {
   FileText,
   TrendingUp,
 } from "lucide-react";
+import { useEffect, useState } from "react";
 import Spinner from "../../components/common/Spinner";
+import progressService from "../../services/progressService";
 
 export default function DashboardPage() {
   const [dashboardData, setDashboardData] = useState(null);
@@ -21,7 +20,6 @@ export default function DashboardPage() {
 
         setDashboardData(data.data);
       } catch (error) {
-        toast.error("Failed to fetch dashboard data.");
         console.error(error);
       } finally {
         setLoading(false);

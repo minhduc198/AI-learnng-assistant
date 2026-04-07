@@ -1,11 +1,13 @@
-import React, { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
-import quizService from "../../services/quizService";
-import toast from "react-hot-toast";
+/* eslint-disable no-prototype-builtins */
 import { CheckCircle2, ChevronLeft, ChevronRight } from "lucide-react";
+import { useEffect, useState } from "react";
+import toast from "react-hot-toast";
+import { useNavigate, useParams } from "react-router-dom";
+import Button from "../../components/common/Button";
 import PageHeader from "../../components/common/PageHeader";
 import Spinner from "../../components/common/Spinner";
-import Button from "../../components/common/Button";
+import quizService from "../../services/quizService";
+import { syncQuizzes } from "../../utils";
 
 export default function QuizTakePage() {
   const { quizId } = useParams();
@@ -77,6 +79,8 @@ export default function QuizTakePage() {
     } finally {
       setSubmitting(false);
     }
+
+    syncQuizzes();
   };
 
   if (loading) {
@@ -100,7 +104,6 @@ export default function QuizTakePage() {
   }
 
   const currentQuestion = quiz.questions[currentQuestionIndex];
-  const isAnswered = selectedAnswers.hasOwnProperty(currentQuestion._id);
   const answeredCount = Object.keys(selectedAnswers).length;
 
   return (
