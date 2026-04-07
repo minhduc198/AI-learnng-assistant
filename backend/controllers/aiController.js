@@ -135,7 +135,15 @@ export const generateSummary = async (req, res, next) => {
       });
     }
 
-    const summary = await geminiService.generateSummary(document.extractedText);
+    let summary = document.summary;
+
+    if (!summary) {
+      summary = await geminiService.generateSummary(document.extractedText);
+
+      document.summary = summary;
+      await document.save();
+    }
+
     res.status(201).json({
       success: true,
       data: {

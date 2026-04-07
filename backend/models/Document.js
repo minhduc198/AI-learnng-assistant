@@ -28,6 +28,10 @@ const documentSchema = new mongoose.Schema(
       type: String,
       default: "",
     },
+    summary: {
+      type: String,
+      default: "",
+    },
     chunks: [
       {
         content: { type: String, required: true },

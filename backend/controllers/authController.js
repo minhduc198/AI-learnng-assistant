@@ -1,10 +1,18 @@
-import jwt from 'jsonwebtoken';
-import User from '../models/User.js';
+import jwt from "jsonwebtoken";
+import User from "../models/User.js";
 
-const generateToken = id => {
+const generateToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET, {
-    expiresIn: process.env.JWT_EXPIRE || '7d',
+    expiresIn: process.env.JWT_EXPIRE || "7d",
   });
+};
+
+const formatProfileImage = (profileImage) => {
+  if (profileImage && profileImage.data) {
+    const contentType = profileImage.contentType || "image/png";
+    return `data:${contentType};base64,${profileImage.data.toString("base64")}`;
+  }
+  return null;
 };
 
 export const register = async (req, res, next) => {
@@ -21,7 +29,10 @@ export const register = async (req, res, next) => {
     if (userExists) {
       return res.status(400).json({
         success: false,
-        error: userExists.email === email ? 'Email already registered' : 'Username already taken',
+        error:
+          userExists.email === email
+            ? "Email already registered"
+            : "Username already taken",
         statusCode: 400,
       });
     }
@@ -41,12 +52,12 @@ export const register = async (req, res, next) => {
           id: user._id,
           username: user.username,
           email: user.email,
-          profileImage: user.profileImage,
+          profileImage: formatProfileImage(user.profileImage),
           createdAt: user.createdAt,
         },
         token,
       },
-      message: 'User register successfully',
+      message: "User register successfully",
     });
   } catch (error) {
     next(error);
@@ -60,17 +71,17 @@ export const login = async (req, res, next) => {
     if (!email || !password) {
       return res.status(400).json({
         success: false,
-        error: 'please provide password and email',
+        error: "please provide password and email",
         statusCode: 400,
       });
     }
 
-    const user = await User.findOne({ email }).select('+password');
+    const user = await User.findOne({ email }).select("+password");
 
     if (!user) {
       return res.status(401).json({
         success: false,
-        error: 'Invalid credentials',
+        error: "Invalid credentials",
         statusCode: 401,
       });
     }
@@ -80,7 +91,7 @@ export const login = async (req, res, next) => {
     if (!isMatch) {
       return res.status(401).json({
         success: false,
-        error: 'Invalid credentials',
+        error: "Invalid credentials",
         statusCode: 401,
       });
     }
@@ -92,10 +103,10 @@ export const login = async (req, res, next) => {
         id: user._id,
         username: user.username,
         email: user.email,
-        profileImage: user.profileImage,
+        profileImage: formatProfileImage(user.profileImage),
       },
       token,
-      message: 'User logged in successfully',
+      message: "User logged in successfully",
     });
   } catch (error) {
     next(error);
@@ -112,9 +123,9 @@ export const getProfile = async (req, res, next) => {
         id: user._id,
         username: user.username,
         email: user.email,
-        profileImage: user.profileImage,
+        profileImage: formatProfileImage(user.profileImage),
         createdAt: user.createdAt,
-        updateAt: user.updateAt,
+        updatedAt: user.updatedAt,
       },
     });
   } catch (error) {
@@ -129,7 +140,21 @@ export const updateProfile = async (req, res, next) => {
 
     if (username) user.username = username;
     if (email) user.email = email;
-    if (profileImage) user.profileImage = profileImage;
+
+    if (profileImage) {
+      if (!profileImage.startsWith("data:image/")) {
+        return res.status(400).json({ message: "Invalid image format" });
+      }
+
+      const match = profileImage.match(/^data:(image\/\w+);base64,/);
+      const contentType = match ? match[1] : "image/png";
+      const base64Data = profileImage.replace(/^data:image\/\w+;base64,/, "");
+
+      user.profileImage = {
+        data: Buffer.from(base64Data, "base64"),
+        contentType: contentType,
+      };
+    }
 
     await user.save();
 
@@ -139,9 +164,9 @@ export const updateProfile = async (req, res, next) => {
         id: user._id,
         username: user.username,
         email: user.email,
-        profileImage: user.profileImage,
+        profileImage: formatProfileImage(user.profileImage),
       },
-      message: 'Profile updated successfully',
+      message: "Profile updated successfully",
     });
   } catch (error) {
     next(error);
@@ -154,19 +179,19 @@ export const changePassword = async (req, res, next) => {
     if (!currentPassword || !newPassword) {
       return res.status(400).json({
         success: false,
-        error: 'Please provide current password and new password',
+        error: "Please provide current password and new password",
         statusCode: 400,
       });
     }
 
-    const user = await User.findById(req.user._id).select('+password');
+    const user = await User.findById(req.user._id).select("+password");
 
     const isMatch = await user.matchPassword(currentPassword);
 
     if (!isMatch) {
       return res.status(401).json({
         success: false,
-        error: 'Current password is incorrect',
+        error: "Current password is incorrect",
         statusCode: 401,
       });
     }
@@ -176,7 +201,7 @@ export const changePassword = async (req, res, next) => {
 
     res.status(200).json({
       success: true,
-      message: 'Password changed successfully',
+      message: "Password changed successfully",
     });
   } catch (error) {
     next(error);
