@@ -71,6 +71,22 @@ const getChatHistory = async (documentId) => {
   }
 };
 
+const generateRelative = async (documentId, count) => {
+  try {
+    const response = await axiosInstance.post(
+      API_PATHS.AI.GENERATE_RELATIVE,
+      { documentId, count },
+    );
+    return response.data?.data;
+  } catch (error) {
+    throw (
+      error.response?.data || {
+        message: "Failed to generate related resources",
+      }
+    );
+  }
+};
+
 const aiService = {
   generateFlashcards,
   generateQuiz,
@@ -78,6 +94,7 @@ const aiService = {
   chat,
   explainConcept,
   getChatHistory,
+  generateRelative,
 };
 
 export default aiService;

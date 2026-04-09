@@ -23,6 +23,7 @@ export const API_PATHS = {
     GENERATE_SUMMARY: "/api/ai/generate-summary",
     CHAT: "/api/ai/chat",
     EXPLAIN_CONCEPT: "/api/ai/explain-concept",
+    GENERATE_RELATIVE: "/api/ai/generate-relative",
     GET_CHAT_HISTORY: (documentId) => `/api/ai/chat-history/${documentId}`,
   },
 

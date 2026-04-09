@@ -117,7 +117,7 @@ export default function Header({ toggleSidebar }) {
                                 {quiz.title}
                               </p>
                               {!quiz.completedAt && (
-                                <div className="w-2 h-2 bg-emerald-500 rounded-full mt-1.5 flex-shrink-0 shadow-[0_0_0_4px_rgba(16,185,129,0.1)]"></div>
+                                <div className="w-2 h-2 bg-emerald-500 rounded-full mt-1.5 shrink-0 shadow-[0_0_0_4px_rgba(16,185,129,0.1)]"></div>
                               )}
                             </div>
 
