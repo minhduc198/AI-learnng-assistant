@@ -236,3 +236,84 @@ ${context.substring(0, 10000)}`;
     throw new Error("Failed to explain concept");
   }
 };
+
+/**
+ * Generate related learning resources and links
+ * @param {string} text - Document text
+ * @param {number} count - Number of resources to generate
+ * @returns {Promise<Array<{title: string, url: string, description: string, type: string}>>}
+ */
+export const generateRelativeResources = async (text, count = 2) => {
+  const prompt = `Suggest exactly ${count} high-quality learning resources related to the text below.
+
+  For each resource, return:
+  T: Title
+  U: A real, working URL from trusted educational sites (e.g. MDN, W3Schools, Khan Academy, Coursera, freeCodeCamp, GeeksforGeeks, Wikipedia, official docs, YouTube)
+  D: Brief description (1–2 sentences)
+  R: Type (article, video, course, documentation, tutorial, book, or tool)
+
+  Rules:
+  - URLs must be real, valid, and from reputable sources
+  - Cover different aspects of the topic
+  - Mix resource types
+  - Order by relevance (most → least)
+  - Separate each resource with "---"
+
+Text:
+${text}`;
+
+  try {
+    const response = await ai.models.generateContent({
+      model: "gemini-2.5-flash-lite",
+      contents: prompt,
+    });
+
+    const generatedText = response.text;
+
+    const resources = [];
+    const blocks = generatedText.split("---").filter((b) => b.trim());
+
+    for (const block of blocks) {
+      const lines = block.trim().split("\n");
+      let title = "",
+        url = "",
+        description = "",
+        type = "article";
+
+      for (const line of lines) {
+        const trimmed = line.trim();
+        if (trimmed.startsWith("T:")) {
+          title = trimmed.substring(2).trim();
+        } else if (trimmed.startsWith("U:")) {
+          url = trimmed.substring(2).trim();
+        } else if (trimmed.startsWith("D:")) {
+          description = trimmed.substring(2).trim();
+        } else if (trimmed.startsWith("R:")) {
+          const t = trimmed.substring(2).trim().toLowerCase();
+          if (
+            [
+              "article",
+              "video",
+              "course",
+              "documentation",
+              "tutorial",
+              "book",
+              "tool",
+            ].includes(t)
+          ) {
+            type = t;
+          }
+        }
+      }
+
+      if (title && url) {
+        resources.push({ title, url, description, type });
+      }
+    }
+
+    return resources;
+  } catch (error) {
+    console.error("Gemini API error:", error);
+    throw new Error("Failed to generate related resources");
+  }
+};
