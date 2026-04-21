@@ -7,6 +7,7 @@ import {
   explainConcept,
   generateRelativeResources,
   getChatHistory,
+  searchNewDocument,
 } from "../controllers/aiController.js";
 import protect from "../middleware/auth.js";
 
@@ -20,6 +21,7 @@ router.post("/generate-summary", generateSummary);
 router.post("/chat", chat);
 router.post("/explain-concept", explainConcept);
 router.post("/generate-relative", generateRelativeResources);
+router.get("/search", searchNewDocument);
 router.get("/chat-history/:documentId", getChatHistory);
 
 export default router;

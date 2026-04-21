@@ -286,13 +286,13 @@ export const generateRelativeResources = async (req, res, next) => {
   try {
     const { documentId, count = 2 } = req.body;
 
-    if (!documentId) {
-      return res.status(400).json({
-        success: false,
-        error: "Please provide documentId",
-        statusCode: 400,
-      });
-    }
+    // if (!documentId) {
+    //   return res.status(400).json({
+    //     success: false,
+    //     error: "Please provide documentId",
+    //     statusCode: 400,
+    //   });
+    // }
 
     const document = await Document.findOne({
       _id: documentId,
@@ -300,29 +300,29 @@ export const generateRelativeResources = async (req, res, next) => {
       status: "ready",
     });
 
-    if (!document) {
-      return res.status(404).json({
-        success: false,
-        error: "Document not found or not ready",
-        statusCode: 404,
-      });
-    }
+    // if (!document) {
+    //   return res.status(404).json({
+    //     success: false,
+    //     error: "Document not found or not ready",
+    //     statusCode: 404,
+    //   });
+    // }
 
-    let relativeText = !!document.summary
-      ? document.summary
-      : document.extractedText;
+    // let relativeText = !!document.summary
+    //   ? document.summary
+    //   : document.extractedText;
 
-    const resources = await geminiService.generateRelativeResources(
-      relativeText,
-      parseInt(count),
-    );
+    // const resources = await geminiService.generateRelativeResources(
+    //   relativeText,
+    //   parseInt(count),
+    // );
 
     res.status(200).json({
       success: true,
       data: {
         documentId,
         title: document.title,
-        resources,
+        resources: [],
       },
       message: "Related resources generated successfully",
     });
@@ -360,6 +360,30 @@ export const getChatHistory = async (req, res, next) => {
       success: true,
       data: chatHistory.messages,
       message: "Chat history retrieved successfully",
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const searchNewDocument = async (req, res, next) => {
+  try {
+    const { searchText } = req.query;
+
+    if (!searchText) {
+      return res.status(400).json({
+        success: false,
+        error: "Cannot find any results",
+        statusCode: 400,
+      });
+    }
+
+    const results = await geminiService.searchNewDocument(searchText);
+
+    res.status(200).json({
+      success: true,
+      data: results,
+      message: "Get new documents successfully",
     });
   } catch (error) {
     next(error);

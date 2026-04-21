@@ -317,3 +317,36 @@ ${text}`;
     throw new Error("Failed to generate related resources");
   }
 };
+
+export const searchNewDocument = async (text) => {
+  const prompt = `Find exactly 3 high-quality PDF documents related to the text below.
+
+  For each result, return: Direct PDF URL (must end with .pdf and be accessible)
+
+  Rules:
+  - ONLY return 3 results (no more, no less)
+  - URLs MUST be real, working, and directly downloadable PDF files
+  - Prefer trusted sources (universities, research papers, official docs)
+  - DO NOT include websites, only PDF links
+  - DO NOT explain anything outside the format
+  - Separate each result with "---"
+
+  Text:
+  ${text}`;
+
+  try {
+    const response = await ai.models.generateContent({
+      model: "gemini-2.5-flash-lite",
+      contents: prompt,
+    });
+
+    const generatedText = response.text;
+
+    const resources = generatedText.split("---").filter((b) => b.trim());
+
+    return resources;
+  } catch (error) {
+    console.error("Gemini API error:", error);
+    throw new Error("Failed to generate related resources");
+  }
+};
