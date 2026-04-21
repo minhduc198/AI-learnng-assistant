@@ -254,7 +254,7 @@ export default function QuizTakePage() {
       </div>
 
       {/* Question Navigation Dots */}
-      <div className="mt-0 flex items-center justify-center gap-2 flex-wrap">
+      <div className="mt-2 flex items-center justify-center gap-2 flex-wrap">
         {quiz.questions.map((_, index) => {
           const isAnsweredQuestion = selectedAnswers.hasOwnProperty(
             quiz.questions[index]._id,

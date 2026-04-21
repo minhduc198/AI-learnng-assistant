@@ -143,7 +143,7 @@ export default function DashboardPage() {
                 ...(dashboardData.recentActivity.quizzes || []).map((quiz) => ({
                   id: quiz._id,
                   description: quiz.title,
-                  timestamp: quiz.lastAttempted,
+                  timestamp: quiz.completedAt,
                   link: `/quizzes/${quiz._id}`,
                   type: "quiz ",
                 })),
@@ -169,7 +169,9 @@ export default function DashboardPage() {
                         </p>
                       </div>
                       <p className="text-xs text-slate-500 pl-4">
-                        {new Date(activity.timestamp).toLocaleString()}
+                        {activity.timestamp
+                          ? new Date(activity.timestamp).toLocaleString()
+                          : "In Progress"}
                       </p>
                     </div>
                     {activity.link && (

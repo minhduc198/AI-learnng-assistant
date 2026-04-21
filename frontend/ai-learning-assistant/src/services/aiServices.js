@@ -73,15 +73,30 @@ const getChatHistory = async (documentId) => {
 
 const generateRelative = async (documentId, count) => {
   try {
-    const response = await axiosInstance.post(
-      API_PATHS.AI.GENERATE_RELATIVE,
-      { documentId, count },
-    );
+    const response = await axiosInstance.post(API_PATHS.AI.GENERATE_RELATIVE, {
+      documentId,
+      count,
+    });
     return response.data?.data;
   } catch (error) {
     throw (
       error.response?.data || {
         message: "Failed to generate related resources",
+      }
+    );
+  }
+};
+
+const searchNewDocument = async (searchText) => {
+  try {
+    const response = await axiosInstance.get(API_PATHS.AI.SEARCH, {
+      params: { searchText },
+    });
+    return response.data?.data;
+  } catch (error) {
+    throw (
+      error.response?.data || {
+        message: "Failed to search documents",
       }
     );
   }
@@ -95,6 +110,7 @@ const aiService = {
   explainConcept,
   getChatHistory,
   generateRelative,
+  searchNewDocument,
 };
 
 export default aiService;

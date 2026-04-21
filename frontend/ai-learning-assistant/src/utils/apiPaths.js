@@ -1,4 +1,4 @@
-export const BASE_URL = "http://localhost:8000";
+export const BASE_URL = "http://localhost:1908";
 
 export const API_PATHS = {
   AUTH: {
@@ -24,6 +24,7 @@ export const API_PATHS = {
     CHAT: "/api/ai/chat",
     EXPLAIN_CONCEPT: "/api/ai/explain-concept",
     GENERATE_RELATIVE: "/api/ai/generate-relative",
+    SEARCH: "/api/ai/search",
     GET_CHAT_HISTORY: (documentId) => `/api/ai/chat-history/${documentId}`,
   },
 
